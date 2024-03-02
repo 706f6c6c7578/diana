@@ -3,19 +3,42 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"strings"
 )
 
 func main() {
 	// Process the command-line parameters
-	textPtr := flag.String("t", "", "The text to be encrypted or decrypted")
-	keyPtr := flag.String("k", "", "The key to be used for encryption or decryption")
+	textFilePtr := flag.String("t", "", "The file containing the text to be encrypted or decrypted")
+	keyFilePtr := flag.String("k", "", "The file containing the key to be used for encryption or decryption")
 	decryptPtr := flag.Bool("d", false, "Set this parameter to switch to decryption mode")
 	flag.Parse()
 
-	// Check if the text and the key were provided
-	if *textPtr == "" || *keyPtr == "" {
-		fmt.Println("Error: You must provide both the text (-t) and the key (-k).")
+	// Check if the text file and the key file were provided
+	if *textFilePtr == "" || *keyFilePtr == "" {
+		fmt.Println("Error: You must provide both the text file (-t) and the key file (-k).")
+		return
+	}
+
+	// Read the text and the key from the files
+	textBytes, err := ioutil.ReadFile(*textFilePtr)
+	if err != nil {
+		fmt.Printf("Error: Could not read the text file: %v\n", err)
+		return
+	}
+	keyBytes, err := ioutil.ReadFile(*keyFilePtr)
+	if err != nil {
+		fmt.Printf("Error: Could not read the key file: %v\n", err)
+		return
+	}
+
+	// Remove any trailing newline characters
+	text := strings.TrimRight(string(textBytes), "\r\n")
+	key := strings.TrimRight(string(keyBytes), "\r\n")
+
+	// Check if the key is shorter than the text
+	if len(key) < len(text) {
+		fmt.Println("Error: The key must not be shorter than the text.")
 		return
 	}
 
@@ -37,24 +60,16 @@ func main() {
 	// Example of using the trigraph for encryption or decryption
 	var output string
 	if *decryptPtr {
-		output = decryptWithTrigraph(*textPtr, *keyPtr, trigraph)
+		output = decryptWithTrigraph(text, key, trigraph)
 	} else {
-		output = encryptWithTrigraph(*textPtr, *keyPtr, trigraph)
+		output = encryptWithTrigraph(text, key, trigraph)
 	}
-	fmt.Printf("\n            *FOR EDUCATIONAL PURPOSES*\n*DESTROY THE PAD SECURELY AFTER USING THE PROGRAM*\n\nInput: %s\nKey: %s\nOutput: %s\n", *textPtr, *keyPtr, output)
+	fmt.Printf("%s\n", output)
+	fmt.Println("*DESTROY PAD SECURELY AFTER PROGRAM USAGE*")
+	
 }
 
 func encryptWithTrigraph(plaintext string, key string, trigraph map[string]rune) string {
-	// Make sure the plaintext and the key have the same length
-	if len(plaintext) != len(key) {
-		fmt.Println("Error: The plaintext and the key must have the same length.")
-		return ""
-	}
-
-	// Convert the plaintext and the key to uppercase
-	plaintext = strings.ToUpper(plaintext)
-	key = strings.ToUpper(key)
-
 	// Initialize the encrypted text
 	var ciphertext strings.Builder
 
@@ -79,16 +94,6 @@ func encryptWithTrigraph(plaintext string, key string, trigraph map[string]rune)
 }
 
 func decryptWithTrigraph(ciphertext string, key string, trigraph map[string]rune) string {
-	// Make sure the ciphertext and the key have the same length
-	if len(ciphertext) != len(key) {
-		fmt.Println("Error: The ciphertext and the key must have the same length.")
-		return ""
-	}
-
-	// Convert the ciphertext and the key to uppercase
-	ciphertext = strings.ToUpper(ciphertext)
-	key = strings.ToUpper(key)
-
 	// Initialize the plaintext
 	var plaintext strings.Builder
 
