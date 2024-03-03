@@ -65,7 +65,7 @@ func main() {
 		output = encryptWithTrigraph(text, key, trigraph)
 	}
 	fmt.Printf("%s\n", output)
-	fmt.Println("*DESTROY PAD SECURELY AFTER PROGRAM USAGE*")
+	//fmt.Println("*DESTROY PAD SECURELY AFTER PROGRAM USAGE*")
 	
 }
 
