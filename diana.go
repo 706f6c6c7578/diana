@@ -60,13 +60,13 @@ func main() {
 	// Example of using the trigraph for encryption or decryption
 	var output string
 	if *decryptPtr {
-		output = decryptWithTrigraph(text, key, trigraph)
+		output = decryptWithTrigraph(text[5:], key[5:], trigraph)
+		output = key[:5] + output
 	} else {
-		output = encryptWithTrigraph(text, key, trigraph)
+		output = encryptWithTrigraph(text, key[5:], trigraph)
+		output = key[:5] + output
 	}
 	fmt.Printf("%s\n", output)
-	//fmt.Println("*DESTROY PAD SECURELY AFTER PROGRAM USAGE*")
-	
 }
 
 func encryptWithTrigraph(plaintext string, key string, trigraph map[string]rune) string {
