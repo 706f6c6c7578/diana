@@ -61,7 +61,7 @@ func main() {
 	var output string
 	if *decryptPtr {
 		output = decryptWithTrigraph(text[5:], key[5:], trigraph)
-		output = key[:5] + output
+		// output = key[:5] + output
 	} else {
 		output = encryptWithTrigraph(text, key[5:], trigraph)
 		output = key[:5] + output
